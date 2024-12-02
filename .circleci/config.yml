@@ -1,61 +1,38 @@
 version: 2.1
 
-parameters:
-  environment:
-    type: string
-    default: "staging"
-    enum: ["staging", "production"]
-
+orbs:
+  slack: circleci/slack@5.1.1
+  
 jobs:
   build:
     docker:
-      - image: circleci/node:latest
+      - image: cimg/base:current
     steps:
-      - checkout 
+      - checkout
       - run:
-          name: "Build Application"
+          name: Mock Build Step
           command: |
-            echo "Building in << pipeline.parameters.environment >> environment"
-      - run:
-          name: Install Dependencies
-          command: |
-            echo "Installing dependencies..."
-            echo "npm install"
-      - run:
-          name: Run Unit Tests
-          command: |
-            echo "Running tests on branch: $CIRCLE_BRANCH"
-            echo "npm test"
-
-  deploy:
-    docker:
-      - image: circleci/node:latest
-    parameters:
-      environment:
-        type: string
-    steps:
-      - run:
-          name: "Deploy Application"
-          command: |
-            echo "Deploying to <<parameters.environment>> environment"
-      - when:
-          condition:
-            equal: ["<< parameters.environment >>", "production"]
-          steps:
-            - run:
-                name: Production Verification
-                command: echo "Performing production-specific verification..."
+            echo "Starting the mock build..."
+            sleep 10
+            echo "Build complete."
+      - slack/notify:
+          event: pass
+          template: basic_success_1
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Mock Build Completed Successfully Júlio Alves"
+                  }
+                }
+              ]
+            }
 
 workflows:
   version: 2
-  deploy-workflow:
+  simple-build-notify:
     jobs:
-      - build
-      - deploy:
-          requires:
-            -  build
-          filters:
-            branches:
-              only:
-                - workshop/circleci
-          environment: "production"
+      - build:
