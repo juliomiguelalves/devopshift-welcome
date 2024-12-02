@@ -15,8 +15,23 @@ jobs:
           command: |
             echo "Building in << pipeline.parameters.environment >> environment"
 
+  deploy:
+    docker:
+      - image: circleci/node:latest
+    parameters:
+      environment:
+        type: string
+    steps:
+      - run:
+          name: "Deploy Application"
+          command: |
+            echo "Deploying to <<parameters.environment>> environment"
+
 workflows:
   version: 2
   deploy-workflow:
     jobs:
+      - build
       - deploy:
+          name: deploy
+          environment: "staging"
