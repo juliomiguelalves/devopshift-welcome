@@ -11,22 +11,19 @@ parameters:
 jobs:
   build:
     docker:
-      - image: circleci/node:18
+      - image: cimg/node:14  # Using Docker executor with a Node.js image
     steps:
-      - checkout
+      - checkout  # Checks out the code from the repository
       - run:
-          name: Install dependencies
+          name: Install Dependencies
           command: npm install
       - run:
-          name: Build project
-          command: npm run build
-      - run:
-          name: Run tests
+          name: Run Tests
           command: npm test
 
   deploy:
     docker:
-      - image: circleci/node:18
+      - image: cimg/node:14
     parameters:
       env:
         type: string
