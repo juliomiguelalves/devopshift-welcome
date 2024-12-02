@@ -4,16 +4,28 @@ parameters:
   environment:
     type: string
     default: "staging"
+    enum: ["staging", "production"]
 
 jobs:
   build:
     docker:
       - image: circleci/node:latest
     steps:
+      - checkout 
       - run:
           name: "Build Application"
           command: |
             echo "Building in << pipeline.parameters.environment >> environment"
+      - run:
+          name: Install Dependencies
+          command: |
+            echo "Installing dependencies..."
+            npm install
+      - run:
+          name: Run Unit Tests
+          command: |
+            echo "Running tests on branch: $CIRCLE_BRANCH"
+            npm test
 
   deploy:
     docker:
@@ -26,6 +38,13 @@ jobs:
           name: "Deploy Application"
           command: |
             echo "Deploying to <<parameters.environment>> environment"
+      - when:
+          condition:
+            equal: ["<< parameters.environment >>", "production"]
+          steps:
+            - run:
+                name: Production Verification
+                command: echo "Performing production-specific verification..."
 
 workflows:
   version: 2
@@ -33,5 +52,10 @@ workflows:
     jobs:
       - build
       - deploy:
-          name: deploy
-          environment: "staging"
+          requires:
+            -  build
+          filters:
+            branches:
+              only:
+                - workshop/circleci
+          environment: "production"
