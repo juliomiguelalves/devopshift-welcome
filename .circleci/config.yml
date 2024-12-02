@@ -35,4 +35,5 @@ workflows:
   version: 2
   simple-build-notify:
     jobs:
-      - build
+      - build:
+          context: slack
