@@ -25,7 +25,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Mock Build Completed Successfully Júlio Alves"
+                    "text": "*Mock Build Completed Successfully Júlio Alves*"
                   }
                 }
               ]
@@ -35,4 +35,4 @@ workflows:
   version: 2
   simple-build-notify:
     jobs:
-      - build:
+      - build
