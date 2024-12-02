@@ -1,5 +1,9 @@
 version: 2.1
 
+orbs:
+  node: circleci/node@4.7.0  # Using a pre-built orb for Node.js setup
+  slack: circleci/slack@4.5.0  # Orb for Slack notifications
+
 # Define parameters
 parameters:
   env:
