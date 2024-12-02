@@ -1,59 +1,22 @@
 version: 2.1
 
-orbs:
-  node: circleci/node@4.7.0  # Using a pre-built orb for Node.js setup
-  slack: circleci/slack@4.5.0  # Orb for Slack notifications
-
-# Define parameters
 parameters:
-  env:
+  environment:
     type: string
-    default: "production"
-    description: "Environment to deploy (e.g., development, staging, production)"
+    default: "staging"
 
-# Define jobs
 jobs:
   build:
     docker:
-      - image: cimg/node:14  # Using Docker executor with a Node.js image
+      - image: circleci/node:latest
     steps:
-      - checkout  # Checks out the code from the repository
       - run:
-          name: Install Dependencies
-          command: npm install
-      - run:
-          name: Run Tests
-          command: npm test
-
-  deploy:
-    docker:
-      - image: cimg/node:14
-    parameters:
-      env:
-        type: string
-    steps:
-      - checkout
-      - run:
-          name: Set up environment variables
+          name: "Build Application"
           command: |
-            echo "Deploying to <<parameters.env>> environment"
-      - run:
-          name: Deploy
-          command: |
-            if [ "<<parameters.env>>" == "production" ]; then
-              echo "Deploying to production..."
-            else
-              echo "Deploying to non-production environment: <<parameters.env>>"
+            echo "Building in << pipeline.parameters.environment >> environment"
 
-# Define workflow
 workflows:
   version: 2
-  build_and_deploy:
+  deploy-workflow:
     jobs:
-      - build
       - deploy:
-          requires:
-            - build
-          matrix:
-            parameters:
-              env: ["development", "staging", "production"]
